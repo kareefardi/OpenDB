@@ -1036,6 +1036,9 @@ int ZInterface::event( const char * name, const char * attr1, const char * val1,
 {
     const char * attr = attr1;
     const char * val = val1;
+    
+    /*
+     * previous code that generated error! 
     std::string event_str;
     event_str = "zevent";
     event_str.append(" ");
@@ -1065,6 +1068,33 @@ int ZInterface::event( const char * name, const char * attr1, const char * val1,
     
     va_end(args);
     //fprintf(stderr,"Event1: %s\n",event_str.c_str() );
+    
+    */
+
+    // mgwoo: Quit as soon as possible 
+    // emergency patches. needed to be fixed later!!
+    std::string event_str;
+
+    va_list args;
+    va_start(args, val1);
+
+    for( ;; ) {
+        event_str.append(val);
+        
+        attr = va_arg(args, const char *);
+        if ( attr == NULL )
+            break;
+
+        val = va_arg(args, const char *);
+
+        if ( val == NULL )
+            error(0, "Missing value argument to ZInterface::event()");
+    }
+
+    // Just print out all of vals.
+    printf( "%s\n", event_str.c_str()); 
+   
+    return 0; 
 
 
     Tcl_SaveResult(_context._interp,&savedResult[curSavedResult++]);
@@ -1097,12 +1127,14 @@ int ZInterface::event( const char * name, const char * attr1, const char * val1,
         }
     }
 
+    /* mgwoo
     const char * result = Tcl_GetStringResult(_context._interp );
     int x = (int)strtol(result,NULL,10);
 
     Tcl_RestoreResult(_context._interp,&savedResult[--curSavedResult]);
 
     return x;
+    */
 }
 
 int ZInterface::event( const char * name, const char * attr1, ZValueType type, ... )
